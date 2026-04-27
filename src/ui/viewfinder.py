@@ -30,14 +30,14 @@ class Viewfinder(QWidget):
             self._init_mock(layout)
 
     def _init_real(self, picam2, layout):
-        """Real mode: embed QGlPicamera2."""
+        """Real mode: embed QGlPicamera2. Falls back to mock if GL fails."""
         try:
             from picamera2.previews.qt import QGlPicamera2
-        except ImportError:
-            # Fallback if picamera2 gui extras not installed
+            self._gl = QGlPicamera2(picam2, width=640, height=480, keep_ar=True)
+        except Exception as e:
+            print(f"[Viewfinder] QGlPicamera2 unavailable ({e}), using mock fallback")
             self._init_mock(layout)
             return
-        self._gl = QGlPicamera2(picam2, width=640, height=480, keep_ar=True)
         layout.addWidget(self._gl)
         # Forward the done_signal from QGlPicamera2
         self._gl.done_signal.connect(self.done_signal.emit)
