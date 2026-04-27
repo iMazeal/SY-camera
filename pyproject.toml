@@ -1,0 +1,25 @@
+[project]
+name = "camera"
+version = "0.1.0"
+description = "Raspberry Pi Camera Application"
+requires-python = ">=3.13"
+dependencies = [
+    "PyQt5>=5.15",
+    "opencv-python-headless>=4.9",
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+picamera2 = ["picamera2"]
+dev = [
+    "pytest>=8.0",
+    "pytest-qt>=4.2",
+    "pytest-cov>=5.0",
+]
+
+[tool.uv.workspace]
+exclude = ["picamera2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
