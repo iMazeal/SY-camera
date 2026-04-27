@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SY Camera
+Comment=Raspberry Pi Camera Application
+Exec=/home/pi/SY-camera/start.sh
+Path=/home/pi/SY-camera
+Terminal=false
+Categories=Graphics;
