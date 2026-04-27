@@ -30,10 +30,10 @@ def test_capture_creates_jpg_file():
         assert img.shape == (480, 640, 3)
 
 
-def test_capture_generates_timestamp_path():
+def test_capture_with_explicit_path():
+    """Capture with explicit path saves file correctly."""
     cm = CameraManager()
     with tempfile.TemporaryDirectory() as tmp:
-        # Override by passing explicit path
         result = cm.capture(str(Path(tmp) / "test.jpg"))
         assert result is not None
 
@@ -42,6 +42,14 @@ def test_capture_respects_busy_flag():
     cm = CameraManager()
     cm._busy = True
     assert cm.capture("any.jpg") is None
+
+
+def test_wait_releases_busy_flag():
+    """Wait releases busy flag even with no job (mock mode)."""
+    cm = CameraManager()
+    cm._busy = True
+    cm.wait(None)
+    assert not cm._busy
 
 
 def test_get_mock_frame_returns_640x480_rgb():

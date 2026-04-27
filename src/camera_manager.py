@@ -1,4 +1,4 @@
-import os
+import sys
 import time
 from datetime import datetime
 from pathlib import Path
@@ -22,8 +22,8 @@ class CameraManager:
             from picamera2 import Picamera2
             self._picam2 = Picamera2()
             self._real_mode = True
-        except Exception:
-            print("[CameraManager] Picamera2 not available, using mock mode")
+        except ImportError:
+            print("[CameraManager] Picamera2 not available, using mock mode", file=sys.stderr)
 
     @property
     def is_real(self) -> bool:
@@ -31,6 +31,7 @@ class CameraManager:
 
     @property
     def picam2(self):
+        """Return the Picamera2 instance, or None in mock mode."""
         return self._picam2
 
     def start_preview(self) -> dict | None:
@@ -82,7 +83,7 @@ class CameraManager:
     def set_controls(self, **kwargs) -> None:
         """Set camera controls (exposure, gain, etc.). No-op in mock mode."""
         if self._real_mode:
-            self._picam2.set_controls(kwargs)
+            self._picam2.set_controls(**kwargs)
 
     def stop(self) -> None:
         """Stop camera and release resources."""
