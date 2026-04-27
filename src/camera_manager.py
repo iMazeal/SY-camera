@@ -49,9 +49,12 @@ class CameraManager:
                 signal_function=None) -> str | None:
         """Trigger photo capture.
 
-        In real mode, signal_function (typically QGlPicamera2.signal_done) is
-        passed to switch_mode_and_capture_file. The caller connects to
-        Viewfinder.done_signal to know when capture completes.
+        When signal_function is provided (QGlPicamera2.signal_done), capture
+        runs asynchronously — the caller must call wait(job) upon receiving
+        Viewfinder.done_signal to release the busy flag.
+
+        When signal_function is None, capture runs synchronously (blocks until
+        done) and releases the busy flag automatically.
 
         In mock mode, saves immediately.
         Returns the output path or None if busy.
@@ -69,6 +72,8 @@ class CameraManager:
             self._picam2.switch_mode_and_capture_file(
                 cfg, output_path, signal_function=signal_function
             )
+            if signal_function is None:
+                self._busy = False
         else:
             self._mock_capture(output_path)
 

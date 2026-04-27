@@ -45,7 +45,7 @@ class MainWindow(QMainWindow):
 
     def _connect_signals(self):
         self.controls.capture_requested.connect(self._on_capture)
-        if self._cm.is_real:
+        if self._cm.is_real and self.viewfinder.signal_done is not None:
             self.viewfinder.done_signal.connect(self._on_capture_done)
 
     def _on_capture(self):
@@ -55,11 +55,13 @@ class MainWindow(QMainWindow):
         self._busy = True
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         path = str(PHOTOS_DIR / f"{timestamp}.jpg")
-        self._cm.capture(path, signal_function=self.viewfinder.signal_done)
-        if not self._cm.is_real:
+        signal_fn = self.viewfinder.signal_done
+        self._cm.capture(path, signal_function=signal_fn)
+        # Release busy if capture completed synchronously
+        if not self._cm.is_real or signal_fn is None:
             self._busy = False
 
     def _on_capture_done(self, job):
-        """Handle capture completion in real mode."""
+        """Handle capture completion in GL mode."""
         self._cm.wait(job)
         self._busy = False
