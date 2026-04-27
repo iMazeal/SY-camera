@@ -2,7 +2,8 @@
 Type=Application
 Name=SY Camera
 Comment=Raspberry Pi Camera Application
-Exec=/home/pi/SY-camera/start.sh
-Path=/home/pi/SY-camera
+Exec=@PROJECT_DIR@/start.sh
 Terminal=false
+StartupNotify=false
 Categories=Graphics;
+X-GNOME-Autostart-enabled=true
